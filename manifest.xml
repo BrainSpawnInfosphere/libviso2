@@ -1,0 +1,22 @@
+<package>
+  <description brief="libviso2">
+
+     libviso2
+
+  </description>
+  <author>Kevin Walchko</author>
+  <license>GPL Ver 2</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/libviso2</url>
+  <depend package="opencv2"/>
+  <depend package="roscpp"/>
+  <depend package="cv_bridge"/>
+  <depend package="image_transport"/>
+  <depend package="camera_info_manager"/>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="std_msgs"/>
+
+</package>
+
+
