@@ -52,6 +52,9 @@ int main (int argc, char** argv) {
   VisualOdometryMono::parameters param;
   
   // calibration parameters for sequence 2010_03_09_drive_0019 
+  // f[pixels] = image_width[pixels]*f[mm]/CCD_width[mm]
+  // Logitech c270 camera
+  // f = (640 pixels)*(4 mm)/(
   param.calib.f  = 645.24; // focal length in pixels
   param.calib.cu = 661.96; // principal point (u-coordinate) in pixels
   param.calib.cv = 194.13; // principal point (v-coordinate) in pixels

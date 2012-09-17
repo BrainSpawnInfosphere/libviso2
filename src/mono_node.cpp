@@ -33,11 +33,13 @@ Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 // ROS
 #include <ros/ros.h>
-#include <sensor_msgs/Image.h>
-#include <image_transport/image_transport.h> // handles raw or compressed images
-#include <cv_bridge/CvBridge.h>
-#include <cv_bridge/cv_bridge.h>
-#include <geometry_msgs/Pose.h>
+#include <sensor_msgs/Image.h>                // image message
+#include <image_transport/image_transport.h>  // handles raw or compressed images
+#include <cv_bridge/CvBridge.h>               // do i need this? isn't this old?
+#include <cv_bridge/cv_bridge.h>              // publishing image
+#include <geometry_msgs/Pose.h>               // pose message
+#include <tf/transform_broadcaster.h>         // publishing transforms
+#include <geometry_msgs/TransformStamped.h>   // transform message
 
 // Lib Viso2
 #include <libviso2/viso_mono.h>
@@ -147,14 +149,29 @@ private:
         bool ok = false;
         
         //print();
-        
+        // ***[ Pose ]*******************************************
+        if( pose_pub.getNumSubscribers() > 0){
         geometry_msgs::Pose pose_msg;
         pose_msg.position.x = pose.val[0][3];
         pose_msg.position.y = pose.val[1][3];
         pose_msg.position.z = pose.val[2][3];
         
         pose_pub.publish(pose_msg);
+        }
         
+		// ***[ Transform ]**************************************
+		if(/*tf_broadcaster.getNumSubscribers()*/ 1){
+		//first, create the message and populate with current info
+		geometry_msgs::TransformStamped odom_trans;
+		odom_trans.header.stamp = ros::Time::now();
+		odom_trans.header.frame_id = "odom";
+		odom_trans.child_frame_id = "base_link";
+		odom_trans.transform.translation.x = pose.val[0][3];
+		odom_trans.transform.translation.y = pose.val[1][3];
+		odom_trans.transform.translation.z = pose.val[2][3];
+		odom_trans.transform.rotation = tf::createQuaternionMsgFromYaw(0.0);
+		tf_broadcaster.sendTransform(odom_trans);
+        }
         ok = true;
         
         return ok;
@@ -167,6 +184,7 @@ private:
     
 	image_transport::ImageTransport transport;
 	image_transport::Subscriber image_sub;
+	tf::TransformBroadcaster tf_broadcaster;
 	ros::Publisher pose_pub;
 	
 	bool debug;
@@ -187,8 +205,15 @@ int main (int argc, char** argv) {
     // set most important visual odometry parameters
     // for a full parameter list, look at: viso_mono.h
     VisualOdometryMono::parameters param;
-    param.calib.f  = 645.24; // focal length in pixels
-    param.height = 1.0; // m
+    
+    // parameters from callibration see:
+    // http://opencv.willowgarage.com/documentation/camera_calibration_and_3d_reconstruction.html
+    // camera_matrix(3,3) = [fx 0 cx; 0 fy cy; 0 0 1]
+    // distortion_coeff(5,1) = [k1,k2,p1,p2,k3]
+    param.calib.f  = 8.4*10;  // focal length in pixels
+    param.calib.cu = 3.21; // center point in pixels
+    param.calib.cv = 2.08; // center point in pixels
+    param.height = 1.0;    // in meters
     
     std::string topic = argv[1];
     

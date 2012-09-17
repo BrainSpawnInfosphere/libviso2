@@ -10,6 +10,8 @@
 
 **Website:** www.cvlibs.net
 
+**ROS Code:** http://github.com/walchko/libviso2
+
 Implemented a ROS node which uses libviso2 to do visual odometery. There are also two demo programs that read data sets (you can get them from www.cvlibs.net) and calculate the pose.  
 
 ## Command Line
@@ -23,6 +25,7 @@ Implemented a ROS node which uses libviso2 to do visual odometery. There are als
 
 ### Published Topics: 
 **Pose:** "/viso_node/pose"
+**Transform:** "/tf"
  
 ### Example:
  	rosrun libviso2 mono_node "/topic/name"
