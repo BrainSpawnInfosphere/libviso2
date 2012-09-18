@@ -1,4 +1,9 @@
-# ROS Node: OpenCV Camera
+# Depreciated
+
+Take a look at this [viso2](http://ros.org/wiki/viso2). It does the same
+thing and is more complete.
+
+# ROS Node: Viso2
 
 **LibViso2 Author:** Andreas Geiger
 
